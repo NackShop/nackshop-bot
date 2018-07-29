@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const bot = new Discord.Client();
 
+var music_isstarted = false;
+
 bot.on('ready', () => {
     console.log(`[NackShop] Bot online!`);
     bot.user.setActivity(`=help > Commande d'aide`);
@@ -8,15 +10,17 @@ bot.on('ready', () => {
 
 bot.on('message', msg => {
     if(msg.author.bot) return;
+    if(!msg.guild) return;
     if(msg.content === '=help'){
         const help_embed = new Discord.RichEmbed()
             .setTitle(`Commande du NackShop Bot!`)
             .setDescription(`Commande d'aide du NackShop Bot:`)
             .setColor('#861111')
             .setFooter('By Nacktor#4363')
-            .addField('🤖 > Bot :', '`=help`,`=info`')
-            .addField('💰 > Shop:', '`=web`,`=don`,`=mail`,`=prix`,`=invitation`')
-            .addField('👮 > Modération:', '`=kick`,`=ban`,`=clear`,`=mute`,`=unmute`');
+            .addField('🤖 > Bot :', '`=help`,`=info`,`=members`')
+            .addField('📝 > Information:', '`=web`,`=don`,`=mail`,`=prix`,`=invitation`')
+            .addField('👮 > Modération:', '`=kick`,`=ban`,`=clear`,`=mute`,`=unmute`')
+            .addField('🎵 > Musique:', '`=play`,`=pause`,`=stop`,`=queue` __**A venir**__');
         msg.react('✅');
         msg.author.send(help_embed);
     }
@@ -30,7 +34,8 @@ bot.on('message', msg => {
             .addField('Name:', 'NackShop')
             .addField('Author:', 'Nacktor#4363')
             .addField('Version:', '1.0.0')
-            .addField('Prefix:', '=');
+            .addField('Prefix:', '=')
+            .addField('Discord:', 'https://discord.gg/j274nm7');
         msg.react('✅');
         msg.author.send(info_embed);
     }
@@ -112,6 +117,23 @@ bot.on('message', msg => {
             msg.channel.send(`${mute.user.username} n'est plus mute !`);
         });
     }
+
+    if(msg.content === "=members"){
+        const membre = msg.guild.memberCount;
+        const bot = msg.guild.roles.find('name', '🤖 BOT').members.size;
+        const total = membre - bot;
+        msg.channel.send(`**Membres:** ${total}`);
+    }
+});
+
+bot.on('guildMemberAdd', member => {
+    const channel = member.guild.channels.find('id', '472739254355623937');
+    channel.send(`${member} bienvenue sur le discord NackDev, Nous espérons nous et notre équipe que tu passeras de bon moments sur le serveur ! :wink: Si tu rencontre des problèmes sur le discord n'hésite pas a nous en faire par ! :tada:`)
+});
+
+bot.on('guildMemberRemove', member => {
+    const channel = member.guild.channels.find('id', '472739254355623937');
+    channel.send(`${member.displayName} est partie du serveur ! :cry: Nous espérons qu''il reviendras dans le future ! Mais ses pas grave un de perdu 10 de retrouver ! :joy:`) 
 });
 
 bot.login(process.env.TOKEN);
